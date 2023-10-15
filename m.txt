@@ -1,0 +1,106 @@
+const criarItem = (tarefa, cor, indice) => {
+    const item = document.createElement('label');
+    item.classList.add('todo_item');
+
+    item.innerHTML = `
+        <input type="checkbox" ${cor} data-indice=${indice}>
+        <section style="color: ${cor}">${tarefa}</section>
+        <input type="color" value="${cor}" data-indice=${indice}>
+        <input type="button" value="E" data-indice=${indice}>
+        <input type="button" value="C" data-indice=${indice}>
+        <input type="button" value="X" data-indice=${indice}>
+    `;
+
+    document.getElementById('todoList').appendChild(item);
+}
+
+const clickItem = (evento) => {
+    const elemento = evento.target;
+    console.log(elemento.type);
+
+    if (elemento.type === 'button') {
+        if (elemento.value == 'X') {
+            const indice = elemento.dataset.indice;
+            removerItem(indice);
+        } else if (elemento.value == 'C') {
+            const indice = elemento.dataset.indice;
+            // Atualize a cor da tarefa com base na seleção do usuário
+            const corSelecionada = document.querySelector(`input[type="color"][data-indice="${indice}"]`).value;
+            atualizarCorTarefa(indice, corSelecionada);
+        } else if (elemento.value == 'E') {
+            const indice = elemento.dataset.indice;
+            editarItem(indice);
+        }
+    } else if (elemento.type === 'checkbox') {
+        const indice = elemento.dataset.indice;
+        atualizarItem(indice);
+    } else if (elemento.type === 'color') {
+        // Lidar com a seleção de cores (caso necessário)
+        const indice = elemento.dataset.indice;
+        const corSelecionada = elemento.value;
+        // Faça algo com a cor selecionada, se necessário
+    }
+}
+
+const atualizarCorTarefa = (indice, cor) => {
+    const banco = getBanco();
+    banco[indice].cor = cor; // Armazene a cor no objeto da tarefa
+    setBanco(banco);
+    atualizarTela();
+}
+
+const criarItem = (tarefa, cor, indice) => {
+    const item = document.createElement('label');
+    item.classList.add('todo_item');
+
+    item.innerHTML = `
+        <input type="checkbox" ${cor} data-indice=${indice}>
+        <section style="color: ${cor}">${tarefa}</section>
+        <input type="color" value="${cor}" data-indice=${indice}>
+        <button class="editar-tarefa" data-indice=${indice}>Editar</button>
+        <input type="button" value="C" data-indice=${indice}>
+        <input type="button" value="X" data-indice=${indice}>
+    `;
+
+    document.getElementById('todoList').appendChild(item);
+}
+
+document.getElementById('todoList').addEventListener('click', clickItem);
+
+const clickItem = (evento) => {
+    const elemento = evento.target;
+
+    if (elemento.type === 'button') {
+        if (elemento.value == 'X') {
+            const indice = elemento.dataset.indice;
+            removerItem(indice);
+        } else if (elemento.value == 'C') {
+            const indice = elemento.dataset.indice;
+            // Atualize a cor da tarefa com base na seleção do usuário
+            const corSelecionada = document.querySelector(`input[type="color"][data-indice="${indice}"]`).value;
+            atualizarCorTarefa(indice, corSelecionada);
+        } else if (elemento.value == 'E') {
+            const indice = elemento.dataset.indice;
+            editarItem(indice);
+        } else if (elemento.classList.contains('editar-tarefa')) {
+            const indice = elemento.dataset.indice;
+            habilitarEdicaoTarefa(indice);
+        }
+    } else if (elemento.type === 'checkbox') {
+        const indice = elemento.dataset.indice;
+        atualizarItem(indice);
+    }
+}
+
+const habilitarEdicaoTarefa = (indice) => {
+    const tarefaElement = document.querySelector(`section[data-indice="${indice}"]`);
+    const novoTexto = prompt('Edite a tarefa:', tarefaElement.textContent);
+    
+    if (novoTexto !== null) {
+        const banco = getBanco();
+        banco[indice].tarefa = novoTexto;
+        setBanco(banco);
+        atualizarTela();
+    }
+}
+
